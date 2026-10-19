@@ -52,9 +52,14 @@ async function doJb() {
         logger.info(`Unsupported console ${version.console}`);
     }
 
-    await load_script(`src/${exploitChain}.js`);
+  if (fn.setuid.invoke(0) !== -1) {
+      msgs.innerHTML = "GoldHEN is Already Loaded ...";
+      return;
+    }
 
-    logger.info(`===${exploitChain.toUpperCase()}===`);
+    
+    await load_script(`src/${exploitChain}.js`);
+    logger.info("===" + exploitChain.toUpperCase() + "===");
 
     try {
       if (exploitChain == "lapse") {
@@ -121,11 +126,16 @@ async function doJb() {
 
       load_bin(bin_u8);
     }
-
-    logger.info("===END===");
+   
+   logger.info("===END===");
+	 var sEl = document.getElementById("spin");
+    if (sEl) {
+        sEl.style.animation = "none";
+        sEl.style.borderTopColor = "#00d8ff"; // Retains original blue
+    }
   } catch (e) {
-    logger.error(e.message);
-    logger.error(e.stack);
-    //mem.free_all();
+    msgs.innerHTML = "Failed: Restart PS4 ...";
+    msgs.style.color = "yellow";
+	
   }
 }
