@@ -4,6 +4,10 @@ body {
     margin: 0;
     padding: 20px;
     text-align: center;
+    font-family: system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    box-sizing: border-box;
+    position: relative;
 }
 
 h2 {
@@ -27,91 +31,174 @@ hr {
 }
 
 .btn-container {
-    margin: 20px 0 30px 0;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.4s ease;
 }
 
+/* Base button configured permanently as a perfect circle locked to the viewport center */
 button {
     background: #2563eb;
     color: #ffffff;
     border: none;
-    padding: 12px 35px;
-    font-size: 18px;
-    font-weight: bold;
     cursor: pointer;
+    display: inline-flex;
+    
+    /* FIX: Force flex children (Press & OK) to stack vertically up and down */
+    flex-direction: column; 
+    align-items: center;
+    justify-content: center;
+    gap: 4px; /* Adjusts vertical space between Press and OK */
+    
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    padding: 0;
+    
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+    z-index: 3;
+    transition: background 0.3s ease, transform 0.2s ease, opacity 0.3s ease;
 }
 
-button:disabled, button:hover:disabled {
+/* Inner Text Span Styling */
+.btn-line {
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    line-height: 1.2;
+}
+
+/* Optional size boost for the core action text */
+.accent-ok {
+    font-size: 20px;
+    font-weight: 800;
+}
+
+button:disabled {
     background: #0b2253;
     cursor: default;
 }
 
-button:hover {
+button:hover:not(:disabled) {
     background: #1d4ed8;
+    transform: translate(-50%, -50%) scale(1.05);
 }
 
-.main-layout {
-    width: 96%;
-    margin: 0 auto;
+/* FIX: Hides individual internal text elements cleanly while executing/spinning */
+button.loading {
+    color: transparent;
+}
+button.loading .btn-line {
+    opacity: 0;
+    visibility: hidden;
 }
 
-.media-box {
-    float: left;
-    width: 25%;
+
+/* --- THE SPINNING LOADER CIRCLE --- */
+#spin {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 140px;
+  height: 140px;
+  transform: translate(-50%, -50%); 
+  border: 4px solid #1e2732;
+  border-top-color: #7fd0a0;
+  border-radius: 50%;
+  animation: spinAnim 0.9s linear infinite;
+  display: none; 
+  z-index: 2; 
+}
+
+@keyframes spinAnim {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* --- THE RUNNING CIRCLE DESIGN (DASHED OUTER RIM) --- */
+#running-circle {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  border: 3px dashed #00d8ff;
+  background: transparent;
+  box-shadow: inset 0 0 15px rgba(0, 191, 255, 0.1), 0 0 10px #00bfff;
+  display: none;
+  z-index: 2;
+}
+
+/* --- AUTO JB CONTROLS WRAPPER (PLACED DIRECTLY UNDER SPINNER LAYER AREA) --- */
+.autoJb-wrapper {
+    position: fixed;
+    top: calc(50% + 140px); /* Safely pushes layout clear of the 220px outer dash ring boundaries */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
     text-align: center;
+    z-index: 2;
 }
 
-.media-box img {
-    width: 90%;
-    height: auto;
-    border: 1px solid #222222;
-}
-
-#console {
-    float: center;
-    width: 98%;
-    background: #000000;
-    color: #00ff00;
-    font-size: 14px;
-    padding: 15px;
-    text-align: left;
-    height: 250px;
-    overflow-y: scroll;
-    word-wrap: break-word;
-    border: 1px solid #222222;
-}
-
-#kernel-options {
-    margin-bottom: 1rem;
-}
-
-.contact-box {
-    text-align: center;
-   
-  }
-
-  .contact-number {
-    font-size: 25px;
+.autoJb {
+    display: inline-block;
+    font-size: 16px;
     font-weight: 500;
-    color: #ffffff;
-    letter-spacing: 0.05em;
-    text-shadow: 0 0 12px rgba(255, 255, 255, 0.15);
-  }
-
-input[type="radio"] {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 1rem;
-    height: 1rem;
-    border: 2px solid #555;
-    border-radius: 50%;
-    background-color: #fff;
-    cursor: pointer;
 }
 
-input[type="radio"]:checked {
-    background-color: #00ff00;
+/* --- HIGH-END CARD OVERLAYS DESIGN BASE --- */
+.status-card {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 420px;
+  box-sizing: border-box;
+  padding: 30px 24px;
+  background: #11151f;
+  border: 1px solid #1e293b;
+  border-radius: 16px;
+  text-align: center;
+  display: none;
+  z-index: 5;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
 }
 
-.mt-2{
-    margin-top: 2rem;
+/* FIXED CONTACT BOX STYLING */
+.contact-box {
+  position: fixed;
+  bottom: 30px; 
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 10; 
+}
+.contact-number {
+  font-size: 20px;
+  font-weight: 800;
+  color: #7fd0a0; 
+  letter-spacing: 0.5px;
+  background: #11151b; 
+  display: inline-block;
+  padding: 8px 16px;
+  border: 1px solid #1e2732;
+  border-radius: 20px;
+}
+body.log .contact-box {
+  display: none;
+}
+
+.mt-2 {
+    margin-left: 8px; /* Changed layout structure to horizontal baseline for compact neat alignment under button */
+    vertical-align: middle;
 }
